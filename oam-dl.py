@@ -21,7 +21,7 @@ import requests
 import json
 import os
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __author__ = "Mike Overby"
 
 arguments = docopt(__doc__, version=__version__)
@@ -76,6 +76,8 @@ def ensure_OAM_DICT():
         return data
     
 def download_one(OAM_DICT, comic):
+    comic = str(comic)
+    
     if not os.path.exists(ROOT_DIR):
         os.makedirs(ROOT_DIR)
 
@@ -100,19 +102,25 @@ def download_one(OAM_DICT, comic):
                 print("[Status: " + str(pic.status_code) + "] Something interrupted the download.")
                 raise ConnectionError
 
+def download_range(OAM_DICT, start, end):
+    start = int(start)
+    end = int(end)
+    
+    dl_count = 1
+    for comic in range(start-1, end):
+        try:
+            download_one(OAM_DICT, comic)                
+            print("Download in progress:", str(dl_count * 100 // (end - start)) + "%")                
+            dl_count += 1
+        except ConnectionError:
+            break
+
 def download_all():
     OAM_DICT = ensure_OAM_DICT()
     if OAM_DICT is None:
         return
+    download_range(OAM_DICT, 1, len(OAM_DICT))
 
-    dl_count = 1
-    for comic in OAM_DICT:
-        try:
-            download_one(OAM_DICT, int(comic))                
-            print("Download in progress:", str(dl_count * 100 // len(OAM_DICT)) + "%")                
-            dl_count += 1
-        except ConnectionError:
-            break
 
 def download_release_num():
     OAM_DICT = ensure_OAM_DICT()
@@ -122,7 +130,7 @@ def download_release_num():
     num = int(arguments["--download-num"])
     if num > 0 and num < len(OAM_DICT):
         try:
-            download_one(OAM_DICT, str(num))
+            download_one(OAM_DICT, num)
             print("Downloaded", num)
         except ConnectionError:
             pass
