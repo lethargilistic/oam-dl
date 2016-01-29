@@ -109,7 +109,7 @@ def download_range(OAM_DICT, start, end):
             break
         bar.next()
     bar.finish()
-    
+
 #Download every comic
 def download_all():
     OAM_DICT = read_in_OAM_DICT()
