@@ -13,10 +13,11 @@ Options:
   --version  Show version
 '''
 from docopt import docopt
-import re
-import requests
 import json
 import os
+import re
+import requests
+from progress.bar import Bar
 __version__ = '0.1.0'
 __author__ = "Mike Overby"
 
@@ -99,15 +100,16 @@ def download_range(OAM_DICT, start, end):
     start = int(start)
     end = int(end)
     
-    dl_count = 1
+    bar = Bar('Downloading', max=end-start+1, suffix='%(percent)d%%')
     for comic in range(start-1, end):
         try:
-            download_one(OAM_DICT, comic)                
-            print("Download in progress:", str(dl_count * 100 // (end - start)) + "%")                
-            dl_count += 1
+            download_one(OAM_DICT, comic)
         except ConnectionError:
+            bar.finish()
             break
-
+        bar.next()
+    bar.finish()
+    
 #Download every comic
 def download_all():
     OAM_DICT = read_in_OAM_DICT()

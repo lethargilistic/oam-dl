@@ -16,8 +16,6 @@ After installing, run oam-dl --create.
 
 # TODO
 * Download ranges of 'Ozy and Millie' comics by release number.
-* Download an 'Ozy and Millie' comic by release date.
-* Cleanup download progress indicator in download_range.
 
 # License
 MIT License http://prodicus.mit-license.org/ © Mike Overby
