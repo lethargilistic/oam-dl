@@ -17,9 +17,6 @@ After installing, run oam-dl --create.
 # TODO
 * Download ranges of 'Ozy and Millie' comics by release number.
 * Download an 'Ozy and Millie' comic by release date.
-* Download a given year of 'Ozy and Millie' comics.
-* Download a given month of 'Ozy and Millie' comics.
-* Store the comic titles?
 * Cleanup download progress indicator in download_range.
 
 # License

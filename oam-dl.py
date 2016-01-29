@@ -5,9 +5,6 @@ Usage:
   oam-dl.py --create
   oam-dl.py --download-all
   oam-dl.py --download-num=<NUMBER>
-  oam-dl.py --download-year=<YEAR>
-  oam-dl.py --download-month=<MONTH> <YEAR>
-  oam-dl.py --download-day=<DAY> <MONTH> <YEAR>
   oam-dl.py --version
   oam-dl.py -h | --help
 Options:
@@ -20,8 +17,7 @@ import re
 import requests
 import json
 import os
-
-__version__ = '0.0.2'
+__version__ = '0.1.0'
 __author__ = "Mike Overby"
 
 arguments = docopt(__doc__, version=__version__)
@@ -30,32 +26,26 @@ BASE_URL = 'http://ozyandmillie.org/comics/'
 OAM_DICT_FILENAME = 'oam_dict.json'
 ROOT_DIR = 'OAM'
 
-#Download all Ozy and Millie comics
-#Download O&M based on release number
-
-#These will run O(n) with dict, but perhaps O(log n) with a list or tree.
-#Or figure out the boundary numbers in O(log n) and just index the dict normally!
-    #Download from some start date to some date
-        #Download all O&M in year
-        #Download all O&M in month of year
-        #Download O&M on a certain day
-
+#Create the json object representing the comic's archive
 def create():
     archive = requests.get(BASE_URL)
     if archive.status_code == 200:
         archive_html = archive.text
         links = re.findall(r'<a href="(.+?)"', archive_html)
-        links = links[1:] #Cut off the parent directory link
+        links = links[1:] #Cut off the parent directory link in webpage
         OAM_DICT = {}
         for oam_num in range(len(links)):
             comic_info = {}
-            
-            date = re.match(r'^(\d+)-(\d+)-(\d+)', links[oam_num])
-            comic_info['date'] = {}
-            comic_info['date']['year'] = date.group(1)
-            comic_info['date']['month'] = date.group(2)
-            comic_info['date']['day'] = date.group(3)
 
+            #Save the date
+            day = re.match(r'^(\d+)-(\d+)-(\d+)', links[oam_num])
+            comic_info['date'] = {}
+            
+            comic_info['date']['year'] = int(day.group(1))
+            comic_info['date']['month'] = int(day.group(2))
+            comic_info['date']['day'] = int(day.group(3))
+
+            #Save the link
             comic_info['link'] = links[oam_num]
             
             OAM_DICT[oam_num] = comic_info
@@ -65,7 +55,8 @@ def create():
     else:
         print("The internet connection didn't work.")
 
-def ensure_OAM_DICT():
+#Read in the json object representing the archive
+def read_in_OAM_DICT():
     if not os.path.exists(OAM_DICT_FILENAME):
         print("There is no data. Run --create")
         return None
@@ -74,22 +65,23 @@ def ensure_OAM_DICT():
         data = json.loads(f.readline())
         f.close()
         return data
-    
+
+#Download a single comic
 def download_one(OAM_DICT, comic):
     comic = str(comic)
     
     if not os.path.exists(ROOT_DIR):
         os.makedirs(ROOT_DIR)
 
-    year_dir = ROOT_DIR + '\\' + OAM_DICT[comic]['date']['year']
+    year_dir = ROOT_DIR + '\\' + str(OAM_DICT[comic]['date']['year'])
     if not os.path.exists(year_dir):
         os.makedirs(year_dir)
 
-    month_dir = year_dir + '\\' + OAM_DICT[comic]['date']['month']
+    month_dir = year_dir + '\\' + str(OAM_DICT[comic]['date']['month'])
     if not os.path.exists(month_dir):
         os.makedirs(month_dir)
 
-    comic_path = month_dir + "\\" + OAM_DICT[comic]['link']
+    comic_path = month_dir + "\\" + str(OAM_DICT[comic]['link'])
     #print(comic_path)
     if not os.path.exists(comic_path):
         with open(comic_path, 'wb') as c:
@@ -102,6 +94,7 @@ def download_one(OAM_DICT, comic):
                 print("[Status: " + str(pic.status_code) + "] Something interrupted the download.")
                 raise ConnectionError
 
+#Download a range of comics
 def download_range(OAM_DICT, start, end):
     start = int(start)
     end = int(end)
@@ -115,15 +108,16 @@ def download_range(OAM_DICT, start, end):
         except ConnectionError:
             break
 
+#Download every comic
 def download_all():
-    OAM_DICT = ensure_OAM_DICT()
+    OAM_DICT = read_in_OAM_DICT()
     if OAM_DICT is None:
         return
     download_range(OAM_DICT, 1, len(OAM_DICT))
 
-
+#Download a specific comic by release number
 def download_release_num():
-    OAM_DICT = ensure_OAM_DICT()
+    OAM_DICT = read_in_OAM_DICT()
     if OAM_DICT is None:
         return
     
@@ -136,15 +130,6 @@ def download_release_num():
             pass
     else:
         print("Ozy and Millie is numbered 1 to", len(OAM_DICT) - 1)
-
-def download_year(year):
-    pass
-
-def download_month(month, year):
-    pass
-
-def download_day(day, month, year):
-    pass
 
 def main():
     if arguments["--create"]:
