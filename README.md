@@ -1,5 +1,5 @@
 # Ozy and Millie Archive CLI
-oam-dl is inspired by and based on xkxd-dl by Tasdik Rahman, which was inspired by youtube-dl by Daniel Bolton.
+oam-dl is inspired by and based on xkcd-dl by Tasdik Rahman, which was inspired by youtube-dl by Daniel Bolton.
 
 It archives the less memetic yet superior (:P) 'Ozy and Millie' by Dana Simpson, which ran from 1998 to 2008.
 

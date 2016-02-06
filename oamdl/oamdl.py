@@ -1,12 +1,14 @@
+#!/usr/bin/env python3
+
 r'''
 Download all Ozy and Millie comics.
 
 Usage:
-  oam-dl.py --create
-  oam-dl.py --download-all
-  oam-dl.py --download-num=<NUMBER>
-  oam-dl.py --version
-  oam-dl.py -h | --help
+  oam-dl --create
+  oam-dl --download-all
+  oam-dl --download-num=<NUMBER>
+  oam-dl --version
+  oam-dl -h | --help
 Options:
   --create  Creates the db of Ozy and Millie comics
   -h --help  Show help
@@ -17,15 +19,17 @@ import json
 import os
 import re
 import requests
+from os.path import expanduser
 from progress.bar import Bar
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = "Mike Overby"
 
 arguments = docopt(__doc__, version=__version__)
 
+HOME = expanduser("~")
 BASE_URL = 'http://ozyandmillie.org/comics/'
-OAM_DICT_FILENAME = 'oam_dict.json'
-ROOT_DIR = 'OAM'
+OAM_DICT_FILENAME = os.path.join(HOME, 'oam_dict.json')
+ROOT_DIR = os.path.join(HOME, 'OAM')
 
 #Create the json object representing the comic's archive
 def create():
@@ -74,16 +78,15 @@ def download_one(OAM_DICT, comic):
     if not os.path.exists(ROOT_DIR):
         os.makedirs(ROOT_DIR)
 
-    year_dir = ROOT_DIR + '\\' + str(OAM_DICT[comic]['date']['year'])
+    year_dir = os.path.join(ROOT_DIR, str(OAM_DICT[comic]['date']['year']))
     if not os.path.exists(year_dir):
         os.makedirs(year_dir)
 
-    month_dir = year_dir + '\\' + str(OAM_DICT[comic]['date']['month'])
+    month_dir = os.path.join(year_dir, str(OAM_DICT[comic]['date']['month']))
     if not os.path.exists(month_dir):
         os.makedirs(month_dir)
 
-    comic_path = month_dir + "\\" + str(OAM_DICT[comic]['link'])
-    #print(comic_path)
+    comic_path = os.path.join(month_dir, str(OAM_DICT[comic]['link']))
     if not os.path.exists(comic_path):
         with open(comic_path, 'wb') as c:
             link = BASE_URL + OAM_DICT[comic]['link']
