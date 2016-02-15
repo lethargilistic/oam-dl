@@ -7,6 +7,7 @@ Usage:
   oam-dl --create
   oam-dl --download-all
   oam-dl --download-num=<NUMBER>
+  oam-dl --download-range [<NUMBER> <NUMBER>]
   oam-dl --version
   oam-dl -h | --help
 Options:
@@ -14,13 +15,26 @@ Options:
   -h --help  Show help
   --version  Show version
 '''
+
+'''
+MIT License
+Copyright (c) 2016 Mike Overby
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+'''
+
 from docopt import docopt
+from os.path import expanduser
+from progress.bar import Bar
 import json
 import os
 import re
 import requests
-from os.path import expanduser
-from progress.bar import Bar
+
 __version__ = '0.1.1'
 __author__ = "Mike Overby"
 
@@ -118,7 +132,6 @@ def download_all():
     OAM_DICT = read_in_OAM_DICT()
     if OAM_DICT is None:
         return
-    download_range(OAM_DICT, 1, len(OAM_DICT))
 
 #Download a specific comic by release number
 def download_release_num():
@@ -136,19 +149,37 @@ def download_release_num():
     else:
         print("Ozy and Millie is numbered 1 to", len(OAM_DICT) - 1)
 
+def download_release_num_range():
+    OAM_DICT = read_in_OAM_DICT()
+    if OAM_DICT is None:
+        return
+    
+    start, end = int(arguments["--download-range"])
+    if (start > 0 and start < len(OAM_DICT)) and (end > 0 and end < len(OAM_DICT)):
+        try:
+            download_range(OAM_DICT, start, end)
+            print("Downloaded from", start, "to", end)
+        except ConnectionError:
+            pass
+    else:
+        print("Ozy and Millie is numbered 1 to", len(OAM_DICT) - 1)
+
+def find_date(date_str):
+    pass
+    '''dateregex = re.compile(r"(\d{4})-(\d{2})-(\d{2})")
+    if not dateregex.match(date_str)
+        print("That date did not match yyyy-mm-dd")
+        return
+    matches = re.find("")'''
+
 def main():
     if arguments["--create"]:
         create()
-    elif arguments["--download-num"]:
+    elif arguments["--download num"]:
         download_release_num()
+    elif arguments["--download start"]:
+        download_release_num_range()
     elif arguments["--download-all"]:
         download_all()
     elif arguments["-h"] or arguments["--help"]:
         print(__doc__)
-    elif arguments["--version"]:
-        print(__version__, __author__)
-    else:
-        print(__doc__)
-
-if __name__ == '__main__':
-    main()

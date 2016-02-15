@@ -33,7 +33,7 @@ setup(
                       'wheel==0.26.0'],
     entry_points={
         'console_scripts': [
-            'oam-dl=oamdl.oamdl:main',
+            'oam-dl=oamdl.__init__:main',
         ],
     },
 )
