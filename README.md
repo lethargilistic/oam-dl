@@ -6,6 +6,7 @@ It archives the less memetic yet superior (:P) *Ozy and Millie* by Dana Simpson,
 # Features
 * Download all *Ozy and Millie* comics.
 * Download individual *Ozy and Millie* comics by release number.
+* Download ranges of *Ozy and Millie* comics by release number.
 
 # Usage
 After installing, run `oam-dl --create`.
@@ -22,7 +23,7 @@ number <NUM>.
 release numbers <START> and <END>.
 
 # TODO
-* Download ranges of *Ozy and Millie* comics by release number.
+* Download via release date (maybe)
 
 # License
-MIT License
+MIT License (see LICENCE.txt)
