@@ -1,3 +1,10 @@
+# Files related to distribution
+build/*
+dist/*
+oam_dl.egg-info/*
+oamdl-venv/*
+oamdl/__pycache__/*
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
