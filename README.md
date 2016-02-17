@@ -10,8 +10,15 @@ It archives the less memetic yet superior (:P) *Ozy and Millie* by Dana Simpson,
 
 # Usage
 After installing, run `oam-dl --create`.
+This creates a json file in your home directory that stores
+information on each of the comics.
 
 ##`--download`
+Downloading a comic will create a directory structure in your
+home directory under OAM to automatically organize your comics 
+by year and month.
+
+### `<NUM>`
 `oam-dl --download <NUM>` retrieves the `Ozy and Millie` comic with release
 number <NUM>.
 
