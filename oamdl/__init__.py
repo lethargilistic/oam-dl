@@ -5,15 +5,18 @@ Download all Ozy and Millie comics.
 
 Usage:
   oam-dl --create
-  oam-dl --download-all
-  oam-dl --download-num=<NUMBER>
-  oam-dl --download-range [<NUMBER> <NUMBER>]
+  oam-dl --download (<NUM> | -r <START> <END> | -a) 
   oam-dl --version
   oam-dl -h | --help
+
 Options:
-  --create  Creates the db of Ozy and Millie comics
-  -h --help  Show help
-  --version  Show version
+       --create    Creates the db of Ozy and Millie comics
+       --download  Download the comic...
+         <NUM>       with this release number
+         -r          with release numbers from <START> to <END>
+         -a          in its entirety  (may take a while)
+  -h, --help       Show help
+      --version    Show version
 '''
 
 '''
@@ -35,7 +38,7 @@ import os
 import re
 import requests
 
-__version__ = '0.1.1'
+__version__ = '0.2.0'
 __author__ = "Mike Overby"
 
 arguments = docopt(__doc__, version=__version__)
@@ -85,6 +88,9 @@ def read_in_OAM_DICT():
         f.close()
         return data
 
+def is_valid_release_num(OAM_DICT, num):
+    return 0 < num < len(OAM_DICT)
+
 #Download a single comic
 def download_one(OAM_DICT, comic):
     comic = str(comic)
@@ -123,6 +129,7 @@ def download_range(OAM_DICT, start, end):
             download_one(OAM_DICT, comic)
         except ConnectionError:
             bar.finish()
+            print("There was a connection error. Download halted.")
             break
         bar.next()
     bar.finish()
@@ -132,6 +139,7 @@ def download_all():
     OAM_DICT = read_in_OAM_DICT()
     if OAM_DICT is None:
         return
+    download_range(OAM_DICT, 1, len(OAM_DICT))
 
 #Download a specific comic by release number
 def download_release_num():
@@ -139,30 +147,25 @@ def download_release_num():
     if OAM_DICT is None:
         return
     
-    num = int(arguments["--download-num"])
-    if num > 0 and num < len(OAM_DICT):
-        try:
-            download_one(OAM_DICT, num)
-            print("Downloaded", num)
-        except ConnectionError:
-            pass
-    else:
-        print("Ozy and Millie is numbered 1 to", len(OAM_DICT) - 1)
+    num = int(arguments["<NUM>"])
+    if is_valid_release_num(OAM_DICT, num):
+        download_one(OAM_DICT, num)
+        print("Downloaded", num)
 
 def download_release_num_range():
     OAM_DICT = read_in_OAM_DICT()
     if OAM_DICT is None:
         return
     
-    start, end = int(arguments["--download-range"])
-    if (start > 0 and start < len(OAM_DICT)) and (end > 0 and end < len(OAM_DICT)):
+    start = int(arguments["<START>"])
+    end = int(arguments["<END>"])
+
+    if is_valid_release_num(OAM_DICT, start) and is_valid_release_num(OAM_DICT, end):
         try:
             download_range(OAM_DICT, start, end)
             print("Downloaded from", start, "to", end)
         except ConnectionError:
             pass
-    else:
-        print("Ozy and Millie is numbered 1 to", len(OAM_DICT) - 1)
 
 def find_date(date_str):
     pass
@@ -175,11 +178,19 @@ def find_date(date_str):
 def main():
     if arguments["--create"]:
         create()
-    elif arguments["--download num"]:
-        download_release_num()
-    elif arguments["--download start"]:
-        download_release_num_range()
-    elif arguments["--download-all"]:
-        download_all()
+    elif arguments["--download"]:
+        if arguments["<NUM>"]:
+            download_release_num()
+        elif arguments["<START>"] or arguments["<END>"]:
+            download_release_num_range()
+        elif arguments["-a"]:
+            download_all()
     elif arguments["-h"] or arguments["--help"]:
         print(__doc__)
+    elif arguments["--version"]:
+        print(__version__, __author__)
+    else:
+        print(__doc__)
+
+if __name__ == '__main__':
+    main()

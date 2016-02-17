@@ -8,7 +8,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='oam-dl',
-    version='0.1.1',
+    version='0.2.0',
     description='Download any or all Ozy and Millie comics',
     long_description=long_description,
     url='https://github.com/lethargilistic/oam-dl',

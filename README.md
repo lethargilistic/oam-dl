@@ -10,11 +10,16 @@ It archives the less memetic yet superior (:P) *Ozy and Millie* by Dana Simpson,
 # Usage
 After installing, run `oam-dl --create`.
 
-##`--download-all`
-`oam-dl --download-all` retrieves every *Ozy and Millie* comic. There are >2000 of them, so the download may take a while.
+##`--download`
+`oam-dl --download <NUM>` retrieves the `Ozy and Millie` comic with release
+number <NUM>.
 
-##`--download-num`
-`oam-dl --download-num=NUM` retrieves the comic with release number NUM.
+###`-a`
+`oam-dl --download -a` retrieves every *Ozy and Millie* comic. There are >2000 of them, so the download may take a while.
+
+###`-r`
+`oam-dl --download -r <START> <END>` retieves the range of comics between
+release numbers <START> and <END>.
 
 # TODO
 * Download ranges of *Ozy and Millie* comics by release number.
