@@ -1,4 +1,8 @@
 # Ozy and Millie Archive CLI
+[![PyPI](https://img.shields.io/pypi/v/oam-dl.svg)](https://pypi.python.org/pypi/oam-dl)
+[![PyPI](https://img.shields.io/pypi/l/oam-dl.svg)]()
+[![PyPI](https://img.shields.io/pypi/pyversions/oam-dl.svg)]()
+
 oam-dl is inspired by and based on xkcd-dl by Tasdik Rahman, which was inspired by youtube-dl by Daniel Bolton.
 
 It archives the less memetic yet superior (:P) *Ozy and Millie* by Dana Simpson, which ran from 1998 to 2008.
@@ -7,6 +11,9 @@ It archives the less memetic yet superior (:P) *Ozy and Millie* by Dana Simpson,
 * Download all *Ozy and Millie* comics.
 * Download individual *Ozy and Millie* comics by release number.
 * Download ranges of *Ozy and Millie* comics by release number.
+
+# Installation
+It's on PyPI: `pip3 install oam-dl`
 
 # Usage
 After installing, run `oam-dl --create`.
