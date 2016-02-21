@@ -6,8 +6,8 @@ Download all Ozy and Millie comics.
 Usage:
   oam-dl --create
   oam-dl --download (<NUM> | -r <START> <END> | -a) 
-  oam-dl --version
   oam-dl -h | --help
+  oam-dl --version
 
 Options:
        --create    Creates the db of Ozy and Millie comics
@@ -71,10 +71,8 @@ def read_in_OAM_DICT():
     if not os.path.exists(OAM_DICT_FILENAME):
         print("There is no data. Run --create")
         return None
-    else:
-        f = open(OAM_DICT_FILENAME, "r")
+    with open(OAM_DICT_FILENAME, "r") as f:
         data = json.loads(f.readline())
-        f.close()
         return data
 
 def is_valid_release_num(OAM_DICT, num):
@@ -111,7 +109,7 @@ def download_one(OAM_DICT, comic):
 def download_range(OAM_DICT, start, end):
     start = int(start)
     end = int(end)
-    
+
     bar = Bar('Downloading', max=end-start+1, suffix='%(percent)d%%')
     for comic in range(start-1, end):
         try:
@@ -123,31 +121,44 @@ def download_range(OAM_DICT, start, end):
         bar.next()
     bar.finish()
 
-#Download every comic
+def int_value_error_msg():
+    print("The release numbers must be integers.")
+
+#Command for downloading every comic
 def download_all():
     OAM_DICT = read_in_OAM_DICT()
-    if OAM_DICT is None:
-        return
-    download_range(OAM_DICT, 1, len(OAM_DICT))
+    if OAM_DICT:
+       download_range(OAM_DICT, 1, len(OAM_DICT))
 
-#Download a specific comic by release number
+#Command for downloading a specific comic by release number
 def download_release_num():
     OAM_DICT = read_in_OAM_DICT()
-    if OAM_DICT is None:
-        return
-    
-    num = int(arguments["<NUM>"])
-    if is_valid_release_num(OAM_DICT, num):
+    try:
+        num = int(arguments["<NUM>"])
+    except ValueError:
+        int_value_error_msg()
+        return 
+
+    if OAM_DICT and is_valid_release_num(OAM_DICT, num):
         download_one(OAM_DICT, num)
         print("Downloaded", num)
 
+# Command for downloading a range of comics by release number
 def download_release_num_range():
     OAM_DICT = read_in_OAM_DICT()
     if OAM_DICT is None:
         return
     
-    start = int(arguments["<START>"])
-    end = int(arguments["<END>"])
+    try:
+        start = int(arguments["<START>"])
+        end = int(arguments["<END>"])
+    except ValueError:
+        int_value_error_msg()
+        return 
+
+    if start > end:
+        print("Start must be lower than N")
+        return 
 
     if is_valid_release_num(OAM_DICT, start) and is_valid_release_num(OAM_DICT, end):
         try:
@@ -176,10 +187,9 @@ def main():
             download_all()
     elif arguments["-h"] or arguments["--help"]:
         print(__doc__)
-    elif arguments["--version"]:
-        print(__version__, __author__)
     else:
-        print(__doc__)
+        print("oam-dl: invalid option")
+        print("Try 'oam-dl --help' for more information")
 
 if __name__ == '__main__':
     main()
