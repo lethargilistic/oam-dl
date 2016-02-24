@@ -2,7 +2,7 @@
 build/*
 dist/*
 oam_dl.egg-info/*
-oamdl-venv/*
+venv-oam-dl/*
 oamdl/__pycache__/*
 
 # Windows image file caches

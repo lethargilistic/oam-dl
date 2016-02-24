@@ -5,20 +5,21 @@ Download all Ozy and Millie comics.
 
 Usage:
   oam-dl --create
-  oam-dl --download (<NUM> | -r <START> <END> | -a) 
+  oam-dl --download (<NUM> | -r <START> <END> | -a) [--path=PATH --pathc=PATH]
   oam-dl -h | --help
   oam-dl --version
 
 Options:
-       --create    Creates the db of Ozy and Millie comics
-       --download  Download the comic...
-         <NUM>       with this release number
-         -r          with release numbers from <START> to <END>
-         -a          in its entirety  (may take a while)
+      --create    Creates the db of Ozy and Millie comics
+      --download  Download the comic...
+        <NUM>       with this release number
+        -r          with release numbers from <START> to <END>
+        -a          in its entirety  (may take a while)
+        path        with the root directory OAM in this directory 
+        pathc       same as path, but create the directory if it does not exist
   -h, --help       Show help
       --version    Show version
 '''
-
 from docopt import docopt
 from os.path import expanduser
 from progress.bar import Bar
@@ -27,7 +28,7 @@ import os
 import re
 import requests
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 __author__ = "Mike Overby"
 
 arguments = docopt(__doc__, version=__version__)
@@ -92,7 +93,6 @@ def download_one(OAM_DICT, comic):
     month_dir = os.path.join(year_dir, str(OAM_DICT[comic]['date']['month']))
     if not os.path.exists(month_dir):
         os.makedirs(month_dir)
-
     comic_path = os.path.join(month_dir, str(OAM_DICT[comic]['link']))
     if not os.path.exists(comic_path):
         with open(comic_path, 'wb') as c:
@@ -123,6 +123,20 @@ def download_range(OAM_DICT, start, end):
 
 def int_value_error_msg():
     print("The release numbers must be integers.")
+
+# Handle the option to set a custom path
+def set_custom_path():
+    if arguments["--path"] and os.path.isdir(arguments["--path"]):
+        global ROOT_DIR
+        ROOT_DIR = os.path.join(arguments["--path"], "OAM")
+        return True
+    elif arguments["--pathc"]:
+        # TODO: So, what if this fails?
+        if not os.path.isdir(arguments["--pathc"]):
+            os.makedirs(arguments["--pathc"])
+        ROOT_DIR = os.path.join(arguments["--pathc"], "OAM")
+        return True
+    return False
 
 #Command for downloading every comic
 def download_all():
@@ -179,6 +193,11 @@ def main():
     if arguments["--create"]:
         create()
     elif arguments["--download"]:
+        if arguments["--path"] or arguments["--pathc"]:
+            path_was_set = set_custom_path()
+            if not path_was_set:
+                print("oam-dl: That path could not be set")
+                return
         if arguments["<NUM>"]:
             download_release_num()
         elif arguments["<START>"] or arguments["<END>"]:
