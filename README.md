@@ -23,8 +23,8 @@ information on each of the comics.
 ##`--download`
 Downloading a comic will create a directory structure in your
 home directory under ~/OAM to automatically organize your comics 
-by year and month. You can specify a path other than ~ with the --path command, 
-and --pathc to create your path if it doesn't already exist.
+by year and month. You can specify a path other than ~ with the `--path` command, 
+and `--pathc` to create your path if it doesn't already exist.
 
 * `oam-dl --download <NUM>` retrieves the `Ozy and Millie` comic with release
 number <NUM>.
@@ -35,6 +35,7 @@ so the download may take a while.
 * `oam-dl --download -r <START> <END>` retieves the range of comics between
 release numbers <START> and <END>.
 
+* `oam-dl --download [option] --path=path/to/directory` creates the archive at that path.
 # TODO
 * Download via release date (maybe)
 
