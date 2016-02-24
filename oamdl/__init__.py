@@ -5,7 +5,7 @@ Download all Ozy and Millie comics.
 
 Usage:
   oam-dl --create
-  oam-dl --download (<NUM> | -r <START> <END> | -a) [--path=PATH --pathc=PATH]
+  oam-dl --download (<NUM> | -r <START> <END> | -a) [--path=PATH | --pathc=PATH]
   oam-dl -h | --help
   oam-dl --version
 
