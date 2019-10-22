@@ -29,7 +29,7 @@ setup(
     packages=find_packages(),
     install_requires=['docopt==0.6.2',
                       'progress==1.2',
-                      'requests==2.8.1',
+                      'requests==2.20.0',
                       'wheel==0.26.0'],
     entry_points={
         'console_scripts': [
