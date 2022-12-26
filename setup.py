@@ -30,7 +30,7 @@ setup(
     install_requires=['docopt==0.6.2',
                       'progress==1.2',
                       'requests==2.8.1',
-                      'wheel==0.26.0'],
+                      'wheel==0.38.1'],
     entry_points={
         'console_scripts': [
             'oam-dl=oamdl.__init__:main',
